@@ -1,4 +1,4 @@
-package httpApp
+package httpMiddlewares
 
 import (
 	"bytes"
