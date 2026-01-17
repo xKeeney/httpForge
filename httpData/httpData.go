@@ -1,4 +1,4 @@
-package httpForge
+package httpData
 
 import (
 	"bytes"
