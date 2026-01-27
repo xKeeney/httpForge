@@ -21,13 +21,13 @@ func InitBaseMiddlewares(logger *httpLogger.HttpLogger) *baseMiddlewares {
 func (m *baseMiddlewares) InfoMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		m.logger.Printf("[INFO:RECIVE]	%s - \"%s %s\"\n",
+		m.logger.Printf("[INFO:RECIVE]    %s - \"%s %s\"\n",
 			r.RemoteAddr, r.Method, r.URL.Path,
 		)
 
 		next.ServeHTTP(w, r)
 
-		m.logger.Printf("[INFO:COMPLETE]	%s - \"%s %s\" in %v\n",
+		m.logger.Printf("[INFO:COMPLETE]  %s - \"%s %s\" in %v\n",
 			r.RemoteAddr, r.Method, r.URL.Path, time.Since(start),
 		)
 	})
