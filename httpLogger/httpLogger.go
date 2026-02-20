@@ -9,7 +9,7 @@ import (
 )
 
 type HttpLogger struct {
-	logger       *log.Logger
+	Logger       *log.Logger
 	fatalLogger  *log.Logger
 	errorLogger  *log.Logger
 	warnLogger   *log.Logger
@@ -65,7 +65,7 @@ func NewHttpLogger(outputPath string, logLevel string) *HttpLogger {
 	infoLogger.Printf("Logger started with log_level='%s'", logLevel)
 
 	return &HttpLogger{
-		logger:       logger,
+		Logger:       logger,
 		fatalLogger:  fatalLogger,
 		errorLogger:  errorLogger,
 		warnLogger:   warnLogger,

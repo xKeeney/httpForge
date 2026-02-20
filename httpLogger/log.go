@@ -2,18 +2,18 @@ package httpLogger
 
 func (l *HttpLogger) Print(v ...any) {
 	if l.logLevel >= 3 {
-		l.logger.Print(v...)
+		l.Logger.Print(v...)
 	}
 }
 
 func (l *HttpLogger) Printf(format string, v ...any) {
 	if l.logLevel >= 3 {
-		l.logger.Printf(format, v...)
+		l.Logger.Printf(format, v...)
 	}
 }
 
 func (l *HttpLogger) Println(v ...any) {
 	if l.logLevel >= 3 {
-		l.logger.Println(v...)
+		l.Logger.Println(v...)
 	}
 }
