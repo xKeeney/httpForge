@@ -10,6 +10,27 @@ import (
 	"time"
 )
 
+// statusRecorder запоминает код ответа
+type statusRecorder struct {
+	http.ResponseWriter
+	status int
+}
+
+// WriteHeader сохраняет код и вызывает оригинальный метод
+func (r *statusRecorder) WriteHeader(status int) {
+	r.status = status
+	r.ResponseWriter.WriteHeader(status)
+}
+
+// Write переопределён, чтобы корректно обрабатывать случай,
+// когда WriteHeader не был вызван явно (статус по умолчанию 200).
+func (r *statusRecorder) Write(b []byte) (int, error) {
+	if r.status == 0 {
+		r.status = http.StatusOK
+	}
+	return r.ResponseWriter.Write(b)
+}
+
 type baseMiddlewares struct {
 	logger *httpLogger.HttpLogger
 }
@@ -20,15 +41,19 @@ func InitBaseMiddlewares(logger *httpLogger.HttpLogger) *baseMiddlewares {
 
 func (m *baseMiddlewares) InfoMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		recorder := &statusRecorder{
+			ResponseWriter: w,
+			status:         http.StatusOK, // начальное значение, но может быть перезаписано
+		}
 		start := time.Now()
 		m.logger.Printf("[INFO:RECIVE]    %s - \"%s %s\"\n",
 			r.RemoteAddr, r.Method, r.URL.Path,
 		)
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(recorder, r)
 
-		m.logger.Printf("[INFO:COMPLETE]  %s - \"%s %s\" in %v\n",
-			r.RemoteAddr, r.Method, r.URL.Path, time.Since(start),
+		m.logger.Printf("[INFO:COMPLETE]  %s - \"%s %s\" -> status %d in %v\n",
+			r.RemoteAddr, r.Method, r.URL.Path, recorder.status, time.Since(start),
 		)
 	})
 }
